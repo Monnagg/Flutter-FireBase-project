@@ -1,4 +1,5 @@
 import 'package:firebase/model/user.dart';
+import 'package:firebase/screens/services/databse.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthenService {
@@ -26,11 +27,12 @@ class AuthenService {
       return null;
     }
   }
+
   //sing in with eamil and password
-   Future signInWithEmailPassowrd(String email, String password) async {
+  Future signInWithEmailPassowrd(String email, String password) async {
     try {
-      UserCredential userCredential = await _auth
-          .signInWithEmailAndPassword(email: email, password: password);
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       User? user = userCredential.user;
       return user;
     } catch (e) {
@@ -45,6 +47,11 @@ class AuthenService {
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
       User? user = userCredential.user;
+      //create new document or the user
+      if (user != null) {
+        await DatabaseService(uid:user.uid).updateUserData('0', '', 100);
+      }
+
       return user;
     } catch (e) {
       print(e.toString());
